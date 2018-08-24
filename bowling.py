@@ -13,7 +13,6 @@ and returns the running score for the whole game.
 The Game class should define a property which contains the calculated score of the game.
 
 """
-import re #uses regular expressions on the calculate_unfinished_game() function
 
 def add_spare_bonus(next_throw):
 	bonus_score = 10 #Tracking a spare, we get 10 for the trame + the pins from the next thow.
@@ -21,7 +20,7 @@ def add_spare_bonus(next_throw):
 		bonus_score += 10 #then add 10
 	else: #otherwise, add the next throw 
 		bonus_score += int(next_throw[0]) #then add as a bonus
-	return bonus_score #return the frame score for the spare + the bonus
+	return bonus_score #return the total frame score for the spare + the bonus
 
 def add_strike_bonus(next_two_throws): #calculates just the strike bonus, using the next two throws
 	#by looking at the second to next throw first, we can deduce the total bonus easier
@@ -40,10 +39,10 @@ def add_strike_bonus(next_two_throws): #calculates just the strike bonus, using 
 			bonus_score += int(next_two_throws[0]) 	#then add as a bonus
 	elif next_two_throws[1] == "/":				 	#if second next throw is a spare, 
 		bonus_score += 10							#add 10 and stop
-	return bonus_score								#retun the total
+	return bonus_score								#retun the total bonus
 
 def is_strike(char):
-	if char == 'X':
+	if char in ['x','X']:
 		return True
 	else:
 		return False
@@ -85,7 +84,7 @@ def print_scoreboard(frame_list, score_list, frame_idx, throw_number):
 
 			elif sum(frame) == 10: 				#if the grame is totalled 10
 				if frame[0] == 10: 				#if the first throw in the frame is 10, it's a strike
-					print '[ X,- ]', 			#display a strike
+					print '[ -,X ]', 			#display a strike
 				else: 							#if the first throw is not 10, it's a spare
 					print '[{}, / ]'.format(frame[0]), #display a spare
 			else: 								#if the frame total is not 10
@@ -193,13 +192,15 @@ def calculate_unfinished_game():
 	""" build a real-time function that takes user input as the game progresses. """
 	#get user input
 	print "No old game entered, starting new Game"
-	score= frame_idx= throw_number= throw_idx= 0 				
-												#track running score, which frame we're on, 
-												# which throw we're on in the frame,
-												# and the number of throws so far
+	#track running score, 
+	# which frame we're on, 
+	# which throw we're on in the frame,
+	# and the number of throws so far
 
-												#throw_number checks which throw in the frame you're on,
-												#throw_idx tracks the number of throws so far total.
+	#throw_number checks which throw in the frame you're on,
+	#throw_idx tracks the number of throws so far total.
+	score= frame_idx= throw_number= throw_idx= 0 				
+
 	bonus_throw = False							#track if there's an extra throw this frame, only used in 10th frame
 	throw_list = []								#create a list of throws as they come in
 	frame_list = []
@@ -225,9 +226,10 @@ def calculate_unfinished_game():
 		#calculate user input
 		throw = raw_input("After your throw, enter a number 0-10. > ") #get user input
 
-		if str(throw) in ["x","X"]:				#convert X to strike
+
+		if is_strike(str(throw)):				#convert X to strike
 			throw="10"
-		if str(throw) == "/":					#convert / to spare
+		if is_spare(str(throw)):				#convert / to spare
 			if throw_number:
 				throw=str(10-throw_list[throw_idx-1])
 			else:
@@ -267,7 +269,7 @@ def calculate_unfinished_game():
 				else: 								#if there are no pins left
 					print "Strike!";print
 					pins = reset_pins(pins) 		#reset pins
-					frame_idx=move_to_next_frame(frame_idx) #go to next frame
+					frame_idx+=1					#go to next frame
 					throw_number=0
 			else: 									#second throw
 				if pins == 0: 						#if there are pins left
