@@ -14,6 +14,8 @@ The Game class should define a property which contains the calculated score of t
 
 """
 
+
+
 def add_spare_bonus(next_throw):
 	bonus_score = 10 #Tracking a spare, we get 10 for the trame + the pins from the next thow.
 	if next_throw[0] == "X": #if next throw is a strike, 
@@ -92,15 +94,15 @@ def print_scoreboard(frame_list, score_list, frame_idx, throw_number):
 
 		elif i == frame_idx:
 			if i == 9:
-				if throw_number == 2: 				#if it's the third throw
+				if throw_number == 2: 			#if it's the third throw
 					print '[{},{},*]'.format(frame[0],frame[1]), 
-				elif throw_number == 1: 			#if it's the second throw
+				elif throw_number == 1: 		#if it's the second throw
 					print '[{},*, ]'.format(frame[0]), 
 				else:
 					print '[*, , ]',
 
 			else:
-				if throw_number == 1: 				#if it's the second throw
+				if throw_number == 1: 			#if it's the second throw
 					print '[ {}, *]'.format(frame[0]), 
 				else:
 					print '[ *,  ]',
@@ -133,15 +135,15 @@ def print_scoreboard(frame_list, score_list, frame_idx, throw_number):
 def calculate_finished_game(score_string):
 	score = 0 									#track running score
 	frame_idx = 0 								#track which frame we're on
-	throw_number = 0 								#track which throw we're on
+	throw_number = 0 							#track which throw we're on
 	is_bonus_throw = False						#track if there's an extra throw this frame
 	score_string+='<<<' 						#add end characters, so the bonus doesn't loop and start from the first throw
 	score_list = list(score_string) 			#convert the string to a list to make it easier to iterate
 	frame_list = []
 	for i in range(0,10):
-		frame_list.append([0,0]) 						#create a list of each frame, and what they scored
+		frame_list.append([0,0]) 				#create a list of each frame, and what they scored
 	frame_list.append([0,0,0]) 					#add the special 10th frame
-	score_list = [0]*12 				#create a list of the total scores for the frame
+	score_list = [0]*12 						#create a list of the total scores for the frame
 
 	for idx, throw in enumerate(score_string):
 		if throw == '<':break							#if we encounter the end charactures, break the loop
@@ -164,13 +166,13 @@ def calculate_finished_game(score_string):
 
 			elif is_strike(throw): 						#if the throw is a srike,
 				strike_bonus = add_strike_bonus(score_string[idx+1:idx+3]) #calculte the strike using the next two throws as well
-				score_list[frame_idx] += strike_bonus #add that value to the frame score
+				score_list[frame_idx] += strike_bonus 	#add that value to the frame score
 				frame_list[frame_idx][throw_number]=10
 				score += strike_bonus 					#add that also to the strike bonus
 				frame_idx+=1 							#move to the next frame
 			elif is_spare(throw):
 				spare_bonus = add_spare_bonus(score_string[idx+1:idx+2]) #set the score from the frame is 10 + whatever the next throw is, no matter what the first throw was (can only be a number (can't throw two spares in a row, or a spare after a strike))
-				score_list[frame_idx] = spare_bonus #set that value to the frame score, it overrides any existing value
+				score_list[frame_idx] = spare_bonus 	#set that value to the frame score, it overrides any existing value
 				frame_list[frame_idx][throw_number]=10-frame_list[frame_idx][0]
 				score += spare_bonus					#add that also to the strike bonus
 				frame_idx+=1 							#move to the next frame
@@ -179,7 +181,7 @@ def calculate_finished_game(score_string):
 def check_valid_throw(throw, pins):
 	if not throw.isdigit(): 						#if input is a number (only numbers are accepted)
 		return False
-	if int(throw) > pins:					#check that the number isn't greater than the number of pins abailable
+	if int(throw) > pins:							#check that the number isn't greater than the number of pins abailable
 		print "no you didn't! there aren't that many pins left." 
 		return False
 	else: 
@@ -205,7 +207,7 @@ def calculate_unfinished_game():
 	throw_list = []								#create a list of throws as they come in
 	frame_list = []
 	for _ in range(0,9):
-		frame_list.append([0,0])		 				#create a list of each frame, and what they scored - 
+		frame_list.append([0,0])		 		#create a list of each frame, and what they scored - 
 	#and add the first 9 frames
 	frame_list.append([0,0,0]) 					#add the special 10th frame
 	score_list = [0]*10 						#create a list of the total scores for the frame
@@ -306,6 +308,7 @@ def calculate_unfinished_game():
 	print "final score: {}".format(sum(score_list))
 	if raw_input("Play again? Enter 'Y', or press enter to quit. ").lower()=='y':
 		Game()
+	return sum(score_list)
 
 class Game(object):
 	score=0
@@ -314,7 +317,7 @@ class Game(object):
 		"""docstring for Game
 
 		#Class should provide two ways to calculate a bowling game score:
-		1. From an optional argument to the class initializer: {completed}
+		1. From an optional argument to the class initializer:
 		2. Real time: The Game class should define a function that takes 
 		a single argument indicating the score of one throw, 
 		and returns the running score for the whole game.
@@ -325,15 +328,6 @@ class Game(object):
 	 	else: 													#if an argument was nor entered, 
 	 		self.score = calculate_unfinished_game() 			#calculate using the unfinished game method (collects user input)
 
-#test assertions
-assert Game('XXXXXXXXXXXX').score == 300
-assert Game('90909090909090909090').score == 90
-assert Game('5/5/5/5/5/5/5/5/5/5/5').score == 150
-assert Game('X7/729/XXX236/7/3').score == 168
-assert Game('00000000000000000000').score == 0
-assert Game('01273/X5/7/345400X70').score == 113
-assert Game('X7/90X088/06XXX81').score == 167
 
-print 'Assertions passed! you did it!'
-
-Game()
+if __name__=='__main__':
+	Game()
