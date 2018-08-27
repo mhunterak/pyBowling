@@ -14,8 +14,6 @@ The Game class should define a property which contains the calculated score of t
 
 """
 
-
-
 def add_spare_bonus(next_throw):
 	bonus_score = 10 #Tracking a spare, we get 10 for the trame + the pins from the next thow.
 	if next_throw[0] == "X": #if next throw is a strike, 
@@ -301,6 +299,7 @@ def calculate_unfinished_game():
 				frame_idx+=1						#go to next frame, ends the game
 			throw_number+=1							#increment throw_number
 		throw_idx+=1								#increment throw_idx
+		yield sum(score_list)
 
 	print_scoreboard(frame_list, score_list, frame_idx, throw_number)
 	_ = raw_input("Game Over!")
@@ -308,14 +307,14 @@ def calculate_unfinished_game():
 	print "final score: {}".format(sum(score_list))
 	if raw_input("Play again? Enter 'Y', or press enter to quit. ").lower()=='y':
 		Game()
-	return sum(score_list)
+	yield sum(score_list)
 
 class Game(object):
 	score=0
 	score_string=""
 	def __init__(self, score_string=""):
+		
 		"""docstring for Game
-
 		#Class should provide two ways to calculate a bowling game score:
 		1. From an optional argument to the class initializer:
 		2. Real time: The Game class should define a function that takes 
@@ -323,11 +322,14 @@ class Game(object):
 		and returns the running score for the whole game.
 		"""
 
-		if score_string: 										#if an argument was entered, 
+		if score_string != "": 									#if an argument was entered, 
 		 	self.score = calculate_finished_game(score_string) 	#calculate using the finished game method
 	 	else: 													#if an argument was nor entered, 
-	 		self.score = calculate_unfinished_game() 			#calculate using the unfinished game method (collects user input)
+			#calculate using the unfinished game method (collects user input)
+	 		self.score = [x for x in calculate_unfinished_game()]
+
 
 
 if __name__=='__main__':
-	Game()
+	l=[x for x in calculate_unfinished_game()]
+	print x
