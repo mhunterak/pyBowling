@@ -112,7 +112,7 @@ def print_scoreboard(frame_list, score_list, frame_idx, throw_number):
 	print
 
 	for i in range(0,10): 
-		if i<frame_idx: 						#if the frame has been played
+		if i < frame_idx: 						#if the frame has been played
 			running_total = sum(score_list[0:i+1])
 			frame_string = str(running_total)
 			if len(frame_string) == 3:
@@ -135,7 +135,7 @@ def calculate_finished_game(score_string):
 	frame_idx = 0 								#track which frame we're on
 	throw_number = 0 							#track which throw we're on
 	is_bonus_throw = False						#track if there's an extra throw this frame
-	score_string+='<<<' 						#add end characters, so the bonus doesn't loop and start from the first throw
+	score_string += '<<<' 						#add end characters, so the bonus doesn't loop and start from the first throw
 	score_list = list(score_string) 			#convert the string to a list to make it easier to iterate
 	frame_list = []
 	for i in range(0,10):
@@ -148,16 +148,16 @@ def calculate_finished_game(score_string):
 		if frame_idx < 10:
 			if throw.isdigit():
 				if score_string[idx+1] == "/":			#if next throw is a spare, 
-					frame_list[frame_idx][0]=int(throw)	#add the throw to the frame_list
+					frame_list[frame_idx][0] = int(throw)	#add the throw to the frame_list
 				else: 									#if it's a normal throw,
 					score_list[frame_idx] += int(throw) #just add to the frame score
 					score += int(throw) 				#add to the running score also
 					if not is_bonus_throw:
-						throw_number+=1
+						throw_number += 1
 						is_bonus_throw = True
 					else:
-						throw_number=0
-						frame_idx+=1 					#move to the next frame
+						throw_number = 0
+						frame_idx += 1 					#move to the next frame
 						is_bonus_throw = False
 
 				frame_list[frame_idx][throw_number] = int(throw)
@@ -167,13 +167,13 @@ def calculate_finished_game(score_string):
 				score_list[frame_idx] += strike_bonus 	#add that value to the frame score
 				frame_list[frame_idx][throw_number]=10
 				score += strike_bonus 					#add that also to the strike bonus
-				frame_idx+=1 							#move to the next frame
+				frame_idx += 1 							#move to the next frame
 			elif is_spare(throw):
 				spare_bonus = add_spare_bonus(score_string[idx+1:idx+2]) #set the score from the frame is 10 + whatever the next throw is, no matter what the first throw was (can only be a number (can't throw two spares in a row, or a spare after a strike))
 				score_list[frame_idx] = spare_bonus 	#set that value to the frame score, it overrides any existing value
-				frame_list[frame_idx][throw_number]=10-frame_list[frame_idx][0]
+				frame_list[frame_idx][throw_number] = 10 - frame_list[frame_idx][0]
 				score += spare_bonus					#add that also to the strike bonus
-				frame_idx+=1 							#move to the next frame
+				frame_idx += 1 							#move to the next frame
 	return score
 
 def check_valid_throw(throw, pins):
@@ -185,7 +185,7 @@ def check_valid_throw(throw, pins):
 	else: 
 		return True
 
-def reset_pins(pins=0):
+def reset_pins(pins = 0):
 	return 10
 
 def calculate_unfinished_game():
@@ -199,7 +199,7 @@ def calculate_unfinished_game():
 
 	#throw_number checks which throw in the frame you're on,
 	#throw_idx tracks the number of throws so far total.
-	score= frame_idx= throw_number= throw_idx= 0 				
+	score = frame_idx = throw_number = throw_idx = 0 				
 
 	bonus_throw = False							#track if there's an extra throw this frame, only used in 10th frame
 	throw_list = []								#create a list of throws as they come in
@@ -228,13 +228,13 @@ def calculate_unfinished_game():
 
 
 		if is_strike(str(throw)):				#convert X to strike
-			throw="10"
+			throw = "10"
 		if is_spare(str(throw)):				#convert / to spare
 			if throw_number:
-				throw=str(10-throw_list[throw_idx-1])
+				throw = str(10-throw_list[throw_idx-1])
 			else:
 				print "Cannot get spare on first throw!"
-				throw="100"						#throws an error, try again (no pun intended)
+				throw = "100"						#throws an error, try again (no pun intended)
 
 
 		if not check_valid_throw(throw,pins):	#check that the number isn't greater than the number of pins abailable
@@ -242,40 +242,40 @@ def calculate_unfinished_game():
 			continue 							#if it's invalid, try again
 		throw = int(throw)						#cast to int
 		throw_list.append(throw)				#save throw in throw_list
-		throw_to_frame[str(throw_idx)]=frame_idx #save which throw was in which frame
-		frame_list[frame_idx][throw_number]=throw #save throw score into the throw score sheet
+		throw_to_frame[str(throw_idx)] = frame_idx #save which throw was in which frame
+		frame_list[frame_idx][throw_number] = throw #save throw score into the throw score sheet
 		score_list[frame_idx]+=throw 			#save throw into the frame score sheet
-		pins-=throw 							#update how many pins are standing after the throw
+		pins -= throw 							#update how many pins are standing after the throw
 
 		#check for strikes and spares
 		if len(throw_list)>1: 						#if we can check last throw
 			if throw_list[throw_idx-1] == 10: 		#if last throw was a strike
 				if throw_to_frame[str(throw_idx-1)]<9: #if last frame was in the first 9
-					score_list[throw_to_frame[str(throw_idx-1)]]+=throw #add this throw to the frame for that throw
+					score_list[throw_to_frame[str(throw_idx-1)]] += throw #add this throw to the frame for that throw
 			elif throw_number<1:
 				if score_list[frame_idx-1] == 10: 	#if last frame was a spare
 					score_list[frame_idx-1] += throw #add this throw to last frame
 		if len(throw_list)>2: 						#if we can check two throws ago
 			if throw_list[throw_idx-2] == 10: 		#if second to last throw was a strike
 				if throw_to_frame[str(throw_idx-2)]<9: #if second to last frame was in the first 9 
-					score_list[throw_to_frame[str(throw_idx-2)]]+=throw #add this throw to the score from that frame
+					score_list[throw_to_frame[str(throw_idx-2)]] += throw #add this throw to the score from that frame
 
 
 		#what to do after the throw depends on several factors
 		if frame_idx<9: 							#first nine frames
 			if throw_number < 1: 					#first throw
 				if pins > 0: 						#if there are pins left
-					throw_number+=1 				#go to second throw in frame
+					throw_number += 1 				#go to second throw in frame
 				else: 								#if there are no pins left
 					print "Strike!";print
 					pins = reset_pins(pins) 		#reset pins
-					frame_idx+=1					#go to next frame
-					throw_number=0
+					frame_idx += 1					#go to next frame
+					throw_number = 0
 			else: 									#second throw
 				if pins == 0: 						#if there are pins left
 					print "Spare!";print
-				frame_idx+=1 						#go to next frame
-				throw_number=0						#reset throw_number to 0
+				frame_idx += 1 						#go to next frame
+				throw_number = 0						#reset throw_number to 0
 				pins = reset_pins(pins) 			#reset pins
 
 		else: 										# final 10th frame
@@ -283,22 +283,22 @@ def calculate_unfinished_game():
 				if pins == 0: 						#if there no are pins left
 					print "Strike!";print
 					pins = reset_pins(pins) 		#reset pins
-					bonus_throw=True 				#you get a bonus 3rd throw
+					bonus_throw = True 				#you get a bonus 3rd throw
 			elif throw_number < 2: 					#second throw
 				if pins == 0: 						#if there no are pins left
 					if throw_list[throw_idx-1]==10:	#if last throw was a strike,
 						print "Strike!";print 		
 					else:	 						#if last throw was not a strike,
 						print "Spare!";print
-					bonus_throw=True 				#either way, you get a bonus 3rd throw
+					bonus_throw = True 				#either way, you get a bonus 3rd throw
 				pins = reset_pins(pins) 			#reset pins
 				if not bonus_throw:					#if you don't have a bonus throw
-					frame_idx+=1 					#go to next frame, ends the game
+					frame_idx += 1 					#go to next frame, ends the game
 			elif throw_number < 3: 					#third throw
 													#Done! nothing special happens.
-				frame_idx+=1						#go to next frame, ends the game
-			throw_number+=1							#increment throw_number
-		throw_idx+=1								#increment throw_idx
+				frame_idx += 1						#go to next frame, ends the game
+			throw_number += 1						#increment throw_number
+		throw_idx += 1								#increment throw_idx
 		yield sum(score_list)
 
 	print_scoreboard(frame_list, score_list, frame_idx, throw_number)
@@ -310,8 +310,8 @@ def calculate_unfinished_game():
 	yield sum(score_list)
 
 class Game(object):
-	score=0
-	score_string=""
+	score = 0
+	score_string = ""
 	def __init__(self, score_string=""):
 		
 		"""docstring for Game
