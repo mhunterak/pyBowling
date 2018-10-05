@@ -188,7 +188,7 @@ def check_valid_throw(throw, pins):
 def reset_pins(pins = 0):
 	return 10
 
-def calculate_unfinished_game():
+def calculate_unfinished_game(test_string=""):
 	""" build a real-time function that takes user input as the game progresses. """
 	#get user input
 	print "No old game entered, starting new Game"
@@ -212,6 +212,9 @@ def calculate_unfinished_game():
 	pins = reset_pins()							#track the number of pins standing
 	throw_to_frame = {}							#track which throw goes to which frame
 
+	if test_string:
+		test_list = list(test_string)
+
 	while frame_idx<10: 						#while we're playing only 10 frames
 		print;print 							#just to add two lines between throws
 		print_scoreboard(frame_list, score_list, frame_idx, throw_number)
@@ -223,8 +226,13 @@ def calculate_unfinished_game():
 			)
 		print;print 							#just to add two lines between throws
 
-		#calculate user input
-		throw = raw_input("After your throw, enter a number 0-10. > ") #get user input
+		if test_string:
+			throw = test_list.pop(0)
+			if throw == 'X':
+				throw = '10'
+		else:
+			#calculate user input
+			throw = raw_input("After your throw, enter a number 0-10. > ") #get user input
 
 
 		if is_strike(str(throw)):				#convert X to strike
@@ -299,15 +307,15 @@ def calculate_unfinished_game():
 				frame_idx += 1						#go to next frame, ends the game
 			throw_number += 1						#increment throw_number
 		throw_idx += 1								#increment throw_idx
-		yield sum(score_list)
 
 	print_scoreboard(frame_list, score_list, frame_idx, throw_number)
-	_ = raw_input("Game Over!")
-	print;print
-	print "final score: {}".format(sum(score_list))
-	if raw_input("Play again? Enter 'Y', or press enter to quit. ").lower()=='y':
-		Game()
-	yield sum(score_list)
+	if not test_string:
+		_ = raw_input("Game Over!")
+		print;print
+		print "final score: {}".format(sum(score_list))
+		if raw_input("Play again? Enter 'Y', or press enter to quit. ").lower()=='y':
+			Game()
+	return sum(score_list)
 
 class Game(object):
 	score = 0
@@ -326,7 +334,7 @@ class Game(object):
 		 	self.score = calculate_finished_game(score_string) 	#calculate using the finished game method
 	 	else: 													#if an argument was nor entered, 
 			#calculate using the unfinished game method (collects user input)
-	 		self.score = [x for x in calculate_unfinished_game()]
+	 		self.score = calculate_unfinished_game()
 
 
 
