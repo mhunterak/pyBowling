@@ -10,12 +10,18 @@ import bowling
 def testFinishedGame(self, inputString, expectedScore):
 	self.assertEqual(bowling.calculate_finished_game(inputString),expectedScore)
 
+#tests unfinished games using a single character as the input for every throw 
 def testUnfinishedGameWithRawInputs(self, inputString, expectedScore):
 	originalRawInput = __builtins__.raw_input
 	__builtins__.raw_input = lambda _: inputString
 	self.assertEqual(bowling.calculate_unfinished_game(), expectedScore)
 	__builtins__.raw_input = originalRawInput
 
+'''
+#tests unfinished games using a string like the finished game - 
+like the finished game method does, but using the function players use to play
+an unfinished game.
+'''
 def testUnfinishedGameWithStrings(self, inputString, expectedScore):
 	self.assertEqual(bowling.calculate_unfinished_game(inputString), expectedScore)
 
