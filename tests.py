@@ -9,12 +9,13 @@ import bowling
 #tests finished games with input strings
 def testFinishedGame(self, inputString, expectedScore):
 	self.assertEqual(bowling.calculate_finished_game(inputString),expectedScore)
+	self.assertEqual(bowling.Game(inputString).score,expectedScore)
 
 #tests unfinished games using a single character as the input for every throw 
 def testUnfinishedGameWithRawInputs(self, inputString, expectedScore):
 	originalRawInput = __builtins__.raw_input
 	__builtins__.raw_input = lambda _: inputString
-	self.assertEqual(bowling.calculate_unfinished_game(), expectedScore)
+	self.assertEqual(bowling.Game().score, expectedScore)
 	__builtins__.raw_input = originalRawInput
 
 '''
@@ -48,12 +49,16 @@ class TestFinishedGameMethods(unittest.TestCase):
 	def testFinishedGame_RandomThreeGame(self):
 		testFinishedGame(self, 'X7/90X088/06XXX81', 167)
 
+	def testRooteGameFunction_PerfectGame(self):
+		self.assertEqual(bowling.Game('XXXXXXXXXXXX').score, 300)
+
 #test suplemental functions for games
 class TestGameFunctions(unittest.TestCase):
 	def testSpareBonuses(self):
 		self.assertEqual(bowling.add_spare_bonus(['5']), 15)
 		self.assertEqual(bowling.add_spare_bonus(['X']), 20)
 		self.assertEqual(bowling.is_strike('X'), True)
+		self.assertEqual(bowling.is_strike('7'), False)
 
 	def testStrikeBonus(self):
 		self.assertEqual(bowling.add_strike_bonus(['2','7']), 19)
@@ -74,6 +79,18 @@ class TestGameFunctions(unittest.TestCase):
 		self.assertEqual(bowling.reset_pins(), 10)
 		self.assertEqual(bowling.reset_pins('5'), 10)
 		self.assertEqual(bowling.reset_pins('10'), 10)
+
+	def testCheckValidThrow(self):
+		self.assertEqual(bowling.check_valid_throw('3', 6), True)
+		self.assertEqual(bowling.check_valid_throw('9', 9), True)
+		self.assertEqual(bowling.check_valid_throw('7', 6), False)
+		self.assertEqual(bowling.check_valid_throw('13', 10), False)
+		self.assertEqual(bowling.check_valid_throw('8', 7), False)
+		self.assertEqual(bowling.check_valid_throw('X', 7), False)
+		self.assertEqual(bowling.check_valid_throw('B', 10), False)
+
+	def testMisc(self):
+		testUnfinishedGameWithStrings(self, '/9X8090XX9090x909090XX   ', 130)
 
 #test unfinished game methods, once with raw inputs (limited scope: the input
 # remains the same for the whole game, so each turn has the same score.) and
@@ -118,6 +135,10 @@ class TestUnfinishedGameMethods(unittest.TestCase):
 
 	def testUnfinishedGame_RandomThreeGame(self):
 		testUnfinishedGameWithStrings(self, 'X7/90X088/06XXX81   ', 167)
+
+	def testTwoGames(self):
+		testUnfinishedGameWithStrings(self, '/9X8090XX9090x909090yyyy   ', 130)
+
 
 #if loading
 if __name__ == '__main__':
