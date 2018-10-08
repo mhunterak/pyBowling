@@ -339,5 +339,4 @@ class Game(object):
 
 
 if __name__=='__main__':
-	l=[x for x in calculate_unfinished_game()]
-	print x
+	Game()
