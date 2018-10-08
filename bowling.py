@@ -238,12 +238,11 @@ def calculate_unfinished_game(test_string=""):
 		if is_strike(str(throw)):				#convert X to strike
 			throw = "10"
 		if is_spare(str(throw)):				#convert / to spare
-			if throw_number:
+			if throw_number:					#if we're not on the first throw
 				throw = str(10-throw_list[throw_idx-1])
 			else:
 				print "Cannot get spare on first throw!"
-				throw = "100"						#throws an error, try again (no pun intended)
-
+				continue
 
 		if not check_valid_throw(throw,pins):	#check that the number isn't greater than the number of pins abailable
 			print "Enter only numbers, please."
@@ -314,7 +313,7 @@ def calculate_unfinished_game(test_string=""):
 		print;print
 		print "final score: {}".format(sum(score_list))
 		if raw_input("Play again? Enter 'Y', or press enter to quit. ").lower()=='y':
-			Game()
+			Game()									# pragma: no cover
 	return sum(score_list)
 
 class Game(object):
@@ -339,4 +338,4 @@ class Game(object):
 
 
 if __name__=='__main__':
-	Game()
+	Game()														# pragma: no cover
